@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { validatePassword } from '@/lib/validation'
 
 interface UserProfile {
   email: string
@@ -113,8 +114,10 @@ export default function SettingsPage() {
       return
     }
 
-    if (formData.password.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters' })
+    // Validate password strength
+    const passwordValidation = validatePassword(formData.password)
+    if (!passwordValidation.valid) {
+      setMessage({ type: 'error', text: passwordValidation.error })
       return
     }
 
@@ -217,6 +220,14 @@ export default function SettingsPage() {
               }
               placeholder="Enter new password"
             />
+            <div className="text-xs text-slate-500 mt-2 space-y-1">
+              <p>Password must be at least 12 characters and contain:</p>
+              <ul className="list-disc list-inside">
+                <li>Uppercase and lowercase letters</li>
+                <li>At least one number</li>
+                <li>At least one special character (!@#$%^&amp;*)</li>
+              </ul>
+            </div>
           </div>
 
           <div className="space-y-2">

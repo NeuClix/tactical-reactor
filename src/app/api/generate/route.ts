@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerComponentClient } from '@/lib/supabase-server'
 import { Anthropic } from '@anthropic-ai/sdk'
+import { validatePrompt, validateContentType } from '@/lib/validation'
+import { rateLimiters, getClientIdentifier, getClientIp, checkRateLimit } from '@/lib/rate-limit'
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -8,7 +10,14 @@ const client = new Anthropic({
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, type } = await request.json()
+    let parsedBody
+    try {
+      parsedBody = await request.json()
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    }
+
+    const { prompt, type } = parsedBody
 
     // Verify user is authenticated
     const supabase = await createServerComponentClient()
@@ -18,6 +27,32 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check rate limit
+    const identifier = getClientIdentifier(user.id, getClientIp(request.headers))
+    const rateLimitCheck = checkRateLimit(identifier, rateLimiters.generate)
+
+    const headers = new Headers()
+    Object.entries(rateLimitCheck.headers).forEach(([key, value]) => {
+      headers.set(key, value)
+    })
+
+    if (!rateLimitCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded. Please try again later.' },
+        { status: 429, headers }
+      )
+    }
+
+    // Validate input
+    const promptValidation = validatePrompt(prompt)
+    if (!promptValidation.valid) {
+      return NextResponse.json({ error: promptValidation.error }, { status: 400, headers })
+    }
+
+    if (!validateContentType(type)) {
+      return NextResponse.json({ error: 'Invalid content type' }, { status: 400, headers })
     }
 
     // Check subscription and usage limits
@@ -85,16 +120,21 @@ export async function POST(request: NextRequest) {
       tokens_used: message.usage.input_tokens + message.usage.output_tokens,
     })
 
-    return NextResponse.json({
-      response: responseText,
-      tokensUsed: message.usage.input_tokens + message.usage.output_tokens,
-      usageCount: usageCount + 1,
-      limit,
-    })
-  } catch (error) {
-    console.error('Generation error:', error)
     return NextResponse.json(
-      { error: 'Failed to generate content' },
+      {
+        response: responseText,
+        tokensUsed: message.usage.input_tokens + message.usage.output_tokens,
+        usageCount: usageCount + 1,
+        limit,
+      },
+      { headers }
+    )
+  } catch (error) {
+    // Log error server-side for debugging, but don't expose to client
+    console.error('Generation error:', error instanceof Error ? error.message : 'Unknown error')
+
+    return NextResponse.json(
+      { error: 'Failed to generate content. Please try again.' },
       { status: 500 }
     )
   }

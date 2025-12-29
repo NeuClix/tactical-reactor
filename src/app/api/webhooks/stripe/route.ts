@@ -24,6 +24,32 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createServerComponentClient()
 
+    // Check for duplicate webhook processing
+    const { data: existingEvent } = await supabase
+      .from('webhook_events')
+      .select('id, processed')
+      .eq('provider', 'stripe')
+      .eq('event_id', event.id)
+      .single()
+
+    // If already processed, return success
+    if (existingEvent?.processed) {
+      return NextResponse.json({ received: true, duplicate: true })
+    }
+
+    // Record webhook event
+    if (!existingEvent) {
+      await supabase.from('webhook_events').insert({
+        provider: 'stripe',
+        event_id: event.id,
+        event_type: event.type,
+        payload: event.data.object,
+      })
+    }
+
+    // Process webhook
+    let processed = false
+
     switch (event.type) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
@@ -50,6 +76,8 @@ export async function POST(request: NextRequest) {
               updated_at: new Date().toISOString(),
             })
             .eq('user_id', userId)
+
+          processed = true
         }
         break
       }
@@ -63,21 +91,33 @@ export async function POST(request: NextRequest) {
             .from('subscriptions')
             .update({ status: 'canceled', updated_at: new Date().toISOString() })
             .eq('user_id', userId)
+
+          processed = true
         }
         break
       }
 
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
-        console.log('Payment succeeded:', invoice.id)
+        console.log('Payment succeeded for invoice:', invoice.id)
+        processed = true
         break
       }
 
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice
-        console.error('Payment failed:', invoice.id)
+        console.error('Payment failed for invoice:', invoice.id)
+        processed = true
         break
       }
+    }
+
+    // Mark webhook event as processed
+    if (existingEvent && processed) {
+      await supabase
+        .from('webhook_events')
+        .update({ processed: true, processed_at: new Date().toISOString() })
+        .eq('id', existingEvent.id)
     }
 
     return NextResponse.json({ received: true })
