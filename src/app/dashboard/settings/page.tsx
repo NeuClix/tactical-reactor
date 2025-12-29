@@ -117,7 +117,7 @@ export default function SettingsPage() {
     // Validate password strength
     const passwordValidation = validatePassword(formData.password)
     if (!passwordValidation.valid) {
-      setMessage({ type: 'error', text: passwordValidation.error })
+      setMessage({ type: 'error', text: passwordValidation.error || 'Invalid password' })
       return
     }
 
