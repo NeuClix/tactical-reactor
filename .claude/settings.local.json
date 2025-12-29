@@ -6,7 +6,9 @@
       "Bash(npm install:*)",
       "Bash(npx shadcn-ui@latest add button card input form dropdown-menu dialog badge alert --yes)",
       "Bash(npx shadcn:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

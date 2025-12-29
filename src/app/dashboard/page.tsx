@@ -1,15 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Zap, Sparkles, Palette, Image, Rocket, Brain } from 'lucide-react'
 
 export default function DashboardPage() {
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-          Welcome to NeuClix Tactical Reactor
+      <div className="space-y-2">
+        <h2 className="text-4xl font-bold tracking-tight">
+          Welcome to <span className="gradient-text-tech">NeuClix Tactical Reactor</span>
         </h2>
-        <p className="mt-2 text-slate-600">
-          Your comprehensive SaaS platform for business intelligence and content creation
+        <p className="text-lg text-dark-300 max-w-2xl">
+          Your comprehensive AI-powered SaaS platform for business intelligence and content creation
         </p>
       </div>
 
@@ -90,17 +91,11 @@ function StatCard({
   description: string
 }) {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-slate-600">
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-slate-900">{value}</div>
-        <p className="mt-1 text-xs text-slate-500">{description}</p>
-      </CardContent>
-    </Card>
+    <div className="card-gradient p-6 space-y-2 hover:shadow-glow transition-all duration-300">
+      <p className="text-sm text-dark-400 font-medium">{title}</p>
+      <div className="text-3xl font-bold text-primary-300">{value}</div>
+      <p className="text-xs text-dark-400">{description}</p>
+    </div>
   )
 }
 
@@ -115,17 +110,37 @@ function FeatureCard({
   href: string
   status: 'ready' | 'coming'
 }) {
+  const icons: Record<string, any> = {
+    'Content Hub': <Sparkles className="w-6 h-6" />,
+    'Gen Hub': <Zap className="w-6 h-6" />,
+    'Brand Hub': <Palette className="w-6 h-6" />,
+    'Media Hub': <Image className="w-6 h-6" />,
+    'Distribution Hub': <Rocket className="w-6 h-6" />,
+    'Intel Hub': <Brain className="w-6 h-6" />,
+  }
+
   return (
-    <Card className={status === 'coming' ? 'opacity-60' : ''}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{title}</CardTitle>
-          <Badge variant={status === 'ready' ? 'default' : 'secondary'}>
-            {status === 'ready' ? 'Ready' : 'Coming Soon'}
-          </Badge>
+    <a
+      href={href}
+      className={`card-gradient p-6 space-y-4 hover:shadow-glow-purple transition-all duration-300 cursor-pointer group ${
+        status === 'coming' ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'
+      }`}
+    >
+      <div className="flex items-start justify-between">
+        <div className="text-accent-400 group-hover:text-accent-300 transition-colors">
+          {icons[title] || <Zap className="w-6 h-6" />}
         </div>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-    </Card>
+        <Badge
+          variant={status === 'ready' ? 'default' : 'secondary'}
+          className={status === 'ready' ? 'bg-primary-500/80' : 'bg-dark-700/80 text-dark-300'}
+        >
+          {status === 'ready' ? 'Ready' : 'Coming Soon'}
+        </Badge>
+      </div>
+      <div>
+        <h3 className="text-lg font-semibold text-dark-50">{title}</h3>
+        <p className="text-sm text-dark-400 mt-1">{description}</p>
+      </div>
+    </a>
   )
 }

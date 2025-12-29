@@ -2,6 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-white text-slate-900;
+@layer base {
+  * {
+    @apply border-primary-200/20;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-dark-950 via-dark-900 to-dark-950 text-dark-100;
+    background-attachment: fixed;
+  }
+
+  h1 {
+    @apply text-4xl font-bold bg-clip-text text-transparent bg-gradient-tech;
+  }
+
+  h2 {
+    @apply text-3xl font-bold text-dark-50;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-dark-100;
+  }
+
+  p {
+    @apply text-dark-300;
+  }
+
+  a {
+    @apply text-primary-400 hover:text-primary-300 transition-colors;
+  }
+}
+
+@layer components {
+  .card-glass {
+    @apply backdrop-blur-md bg-dark-800/40 border border-primary-500/20 rounded-lg;
+  }
+
+  .card-gradient {
+    @apply bg-gradient-to-br from-primary-600/10 to-accent-600/10 border border-primary-400/30 rounded-lg;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-glow hover:shadow-glow hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 rounded-lg border border-primary-400/50 text-primary-300 font-semibold hover:border-primary-300 hover:bg-primary-500/10 transition-all;
+  }
+
+  .text-glow {
+    @apply text-primary-300 drop-shadow-lg;
+  }
+
+  .gradient-text-tech {
+    @apply bg-gradient-tech bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-md bg-dark-900/50 border border-white/5;
+  }
 }
