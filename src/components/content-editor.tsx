@@ -27,6 +27,7 @@ export default function ContentEditor({
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     content: initialData?.content || '',
+    content_type: initialData?.content_type || 'blog' as 'blog' | 'social' | 'email' | 'page',
     status: initialData?.status || 'draft' as 'draft' | 'published',
   })
 
@@ -118,6 +119,28 @@ export default function ContentEditor({
               }
               className="w-full h-64 px-3 py-2 border border-slate-200 rounded-md font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          {/* Content Type */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-900">
+              Content Type
+            </label>
+            <select
+              value={formData.content_type}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  content_type: e.target.value as 'blog' | 'social' | 'email' | 'page',
+                })
+              }
+              className="w-full px-3 py-2 border border-slate-200 rounded-md bg-white text-sm"
+            >
+              <option value="blog">Blog Post</option>
+              <option value="social">Social Media</option>
+              <option value="email">Email</option>
+              <option value="page">Page</option>
+            </select>
           </div>
 
           {/* Status */}
