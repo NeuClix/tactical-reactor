@@ -255,8 +255,8 @@ export default function SettingsPage() {
                 <p className="font-medium text-slate-900">
                   Plan: {subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)}
                 </p>
-                <p className="text-sm text-slate-600">
-                  Status:{' '}
+                <div className="text-sm text-slate-600 flex items-center gap-2">
+                  <span>Status:</span>
                   <Badge
                     variant={
                       subscription.status === 'active' ? 'default' : 'secondary'
@@ -264,7 +264,7 @@ export default function SettingsPage() {
                   >
                     {subscription.status}
                   </Badge>
-                </p>
+                </div>
                 {subscription.current_period_end && (
                   <p className="text-sm text-slate-600 mt-2">
                     Renews:{' '}
