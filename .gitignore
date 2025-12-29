@@ -34,3 +34,12 @@ coverage
 # Misc
 *.pem
 nul
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
+
+# Temporary files
+security-todo.md
