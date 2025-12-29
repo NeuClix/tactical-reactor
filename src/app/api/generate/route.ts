@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     // Call Claude API
     const systemPrompt = getSystemPrompt(type)
     const message = await client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-3-5-haiku-20241022',
       max_tokens: 1024,
       messages: [
         {
