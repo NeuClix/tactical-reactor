@@ -1,6 +1,7 @@
 import { createServerComponentClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { LayoutDashboard, FileText, Zap, Palette, Settings, LogOut } from 'lucide-react'
 
@@ -31,12 +32,14 @@ export default async function DashboardLayout({
       <aside className="w-64 border-r border-primary-500/10 bg-gradient-to-b from-dark-900 to-dark-950 shadow-lg flex flex-col">
         {/* Logo Section */}
         <div className="p-6 border-b border-primary-500/10">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold bg-gradient-tech bg-clip-text text-transparent">
-              NeuClix
-            </h1>
-            <p className="text-xs text-dark-400">Tactical Reactor</p>
-          </div>
+          <Image
+            src="/tactical-reactor-logo.png"
+            alt="Tactical Reactor Logo"
+            width={200}
+            height={60}
+            className="h-auto w-full object-contain"
+            priority
+          />
         </div>
 
         {/* Navigation */}
