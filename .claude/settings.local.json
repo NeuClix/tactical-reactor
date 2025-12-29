@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn-ui@latest add button card input form dropdown-menu dialog badge alert --yes)",
+      "Bash(npx shadcn:*)",
+      "Bash(npm run build:*)"
+    ]
+  }
+}
