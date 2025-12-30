@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
+import { PageLoading } from '@/components/ui/loading-spinner'
 import ContentEditor from '@/components/content-editor'
 
 export default function EditContentPage() {
@@ -60,7 +61,7 @@ export default function EditContentPage() {
   }
 
   if (loading) {
-    return <div className="text-center py-8">Loading...</div>
+    return <PageLoading message="Loading content..." />
   }
 
   if (error || !content) {

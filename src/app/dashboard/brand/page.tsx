@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
+import { PageLoading } from '@/components/ui/loading-spinner'
 
 interface BrandProfile {
   id: string
@@ -113,7 +113,7 @@ export default function BrandHubPage() {
   }
 
   if (loading) {
-    return <div className="text-center py-8">Loading...</div>
+    return <PageLoading message="Loading brand profile..." />
   }
 
   return (

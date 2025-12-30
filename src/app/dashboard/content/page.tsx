@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { PageLoading } from '@/components/ui/loading-spinner'
+import { useConfirmDialog } from '@/components/ui/confirm-dialog'
 import Link from 'next/link'
 import { Plus, Trash2, Eye } from 'lucide-react'
 
@@ -24,6 +25,7 @@ export default function ContentHubPage() {
   const [items, setItems] = useState<ContentItem[]>([])
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const { confirm, ConfirmDialog } = useConfirmDialog()
 
   useEffect(() => {
     loadContent()
@@ -55,7 +57,15 @@ export default function ContentHubPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this content?')) return
+    const confirmed = await confirm({
+      title: 'Delete Content',
+      description: 'Are you sure you want to delete this content? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'destructive',
+    })
+
+    if (!confirmed) return
 
     try {
       setDeleting(id)
@@ -75,7 +85,7 @@ export default function ContentHubPage() {
   }
 
   if (loading) {
-    return <div className="text-center py-8">Loading...</div>
+    return <PageLoading message="Loading content..." />
   }
 
   return (
@@ -153,6 +163,7 @@ export default function ContentHubPage() {
           ))}
         </div>
       )}
+      {ConfirmDialog}
     </div>
   )
 }
