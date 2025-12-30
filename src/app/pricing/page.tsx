@@ -15,20 +15,47 @@ export default function PricingPage() {
     setLoading(true)
 
     try {
+      // Fetch CSRF token first
+      const csrfResponse = await fetch('/api/csrf-token')
+      const { token: csrfToken } = await csrfResponse.json()
+
+      if (!csrfToken) {
+        throw new Error('Failed to get security token')
+      }
+
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId: PRICING_TIERS[tier].priceId,
           tier,
+          csrfToken,
         }),
       })
 
-      const { url } = await response.json()
+      const { url, error } = await response.json()
 
+      if (error) {
+        throw new Error(error)
+      }
+
+      // Validate redirect URL - only allow Stripe domains
       if (url) {
-        // Redirect to Stripe Checkout
-        window.location.href = url
+        const allowedOrigins = [
+          'https://checkout.stripe.com',
+          'https://billing.stripe.com',
+        ]
+
+        try {
+          const urlObj = new URL(url)
+          if (allowedOrigins.some(origin => url.startsWith(origin))) {
+            window.location.href = url
+          } else {
+            throw new Error('Invalid checkout URL')
+          }
+        } catch {
+          throw new Error('Invalid checkout URL')
+        }
       }
     } catch (error) {
       console.error('Checkout error:', error)
