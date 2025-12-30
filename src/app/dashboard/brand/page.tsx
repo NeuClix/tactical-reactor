@@ -137,7 +137,7 @@ export default function BrandHubPage() {
         <CardHeader>
           <CardTitle>Brand Settings</CardTitle>
           <CardDescription>
-            Configure your brand's visual identity
+            Configure your brand&apos;s visual identity
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -181,7 +181,7 @@ export default function BrandHubPage() {
               />
             </div>
             <p className="text-xs text-slate-500">
-              Your brand's main color (hex format)
+              Your brand&apos;s main color (hex format)
             </p>
           </div>
 
@@ -208,7 +208,7 @@ export default function BrandHubPage() {
               />
             </div>
             <p className="text-xs text-slate-500">
-              Your brand's accent color (hex format)
+              Your brand&apos;s accent color (hex format)
             </p>
           </div>
 

@@ -172,7 +172,7 @@ export default function PricingPage() {
                 Do you offer a free trial?
               </h3>
               <p className="text-dark-300 mt-2">
-                Contact us for a free trial of any plan. We're happy to help you get started.
+                Contact us for a free trial of any plan. We&apos;re happy to help you get started.
               </p>
             </div>
             <div className="card-gradient p-6">
@@ -180,7 +180,7 @@ export default function PricingPage() {
                 What happens if I exceed my request limit?
               </h3>
               <p className="text-dark-300 mt-2">
-                We'll notify you when you're approaching your limit. You can upgrade to a higher tier or purchase additional requests.
+                We&apos;ll notify you when you&apos;re approaching your limit. You can upgrade to a higher tier or purchase additional requests.
               </p>
             </div>
           </div>
