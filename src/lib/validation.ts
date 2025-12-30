@@ -94,6 +94,11 @@ export function validatePriceIdForTier(
 /**
  * Validate password strength
  * Enforces minimum requirements for account security
+ *
+ * Policy:
+ * - Passwords 20+ characters: Only length requirement (supports passphrases)
+ * - Passwords 12-19 characters: Requires complexity (upper, lower, number, special)
+ * - Passwords under 12 characters: Rejected
  */
 export function validatePassword(password: unknown): { valid: boolean; error?: string } {
   if (typeof password !== 'string') {
@@ -101,25 +106,38 @@ export function validatePassword(password: unknown): { valid: boolean; error?: s
   }
 
   const MIN_LENGTH = 12
-  const hasUpperCase = /[A-Z]/.test(password)
-  const hasLowerCase = /[a-z]/.test(password)
-  const hasNumbers = /\d/.test(password)
-  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+  const PASSPHRASE_LENGTH = 20 // Length at which complexity requirements are lifted
+  const MAX_LENGTH = 128 // Prevent DoS with extremely long passwords
+
+  if (password.length > MAX_LENGTH) {
+    return { valid: false, error: `Password cannot exceed ${MAX_LENGTH} characters` }
+  }
 
   if (password.length < MIN_LENGTH) {
     return { valid: false, error: `Password must be at least ${MIN_LENGTH} characters` }
   }
 
+  // Long passwords (passphrases) don't need complexity - length provides sufficient entropy
+  if (password.length >= PASSPHRASE_LENGTH) {
+    return { valid: true }
+  }
+
+  // Shorter passwords require complexity
+  const hasUpperCase = /[A-Z]/.test(password)
+  const hasLowerCase = /[a-z]/.test(password)
+  const hasNumbers = /\d/.test(password)
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+
   if (!hasLowerCase || !hasUpperCase) {
-    return { valid: false, error: 'Password must contain both uppercase and lowercase letters' }
+    return { valid: false, error: 'Password must contain both uppercase and lowercase letters (or use 20+ characters)' }
   }
 
   if (!hasNumbers) {
-    return { valid: false, error: 'Password must contain at least one number' }
+    return { valid: false, error: 'Password must contain at least one number (or use 20+ characters)' }
   }
 
   if (!hasSpecialChar) {
-    return { valid: false, error: 'Password must contain at least one special character' }
+    return { valid: false, error: 'Password must contain at least one special character (or use 20+ characters)' }
   }
 
   return { valid: true }

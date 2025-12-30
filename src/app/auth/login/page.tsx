@@ -23,14 +23,26 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Use rate-limited API route for login
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (error) {
-        setError(error.message)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Login failed')
         return
+      }
+
+      // Set the session in Supabase client
+      if (data.session) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        })
       }
 
       router.push('/dashboard')

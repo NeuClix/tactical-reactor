@@ -10,7 +10,7 @@ export async function GET() {
     const token = await getOrCreateCsrfToken()
     return NextResponse.json({ token })
   } catch (error) {
-    console.error('CSRF token generation error:', error)
+    console.error('CSRF token generation error:', error instanceof Error ? error.message : 'Unknown error')
     return NextResponse.json(
       { error: 'Failed to generate token' },
       { status: 500 }

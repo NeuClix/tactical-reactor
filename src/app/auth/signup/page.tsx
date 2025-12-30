@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { validatePassword } from '@/lib/validation'
 import Link from 'next/link'
 
 export default function SignupPage() {
@@ -23,23 +24,30 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
 
+    // Client-side validation for immediate feedback
+    const passwordValidation = validatePassword(password)
+    if (!passwordValidation.valid) {
+      setError(passwordValidation.error || 'Password does not meet requirements')
+      setLoading(false)
+      return
+    }
+
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-          },
-        },
+      // Use rate-limited API route for signup
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name }),
       })
 
-      if (error) {
-        setError(error.message)
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Signup failed')
         return
       }
 
-      // Redirect to login page or dashboard depending on email verification settings
+      // Redirect to login page
       router.push('/auth/login?message=Check your email to confirm your account')
     } catch (err) {
       setError('An error occurred. Please try again.')
@@ -111,6 +119,9 @@ export default function SignupPage() {
                 required
                 className="w-full px-4 py-2 rounded-lg bg-dark-700/50 border border-primary-500/20 text-dark-100 placeholder-dark-500 focus:outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-400 transition-all"
               />
+              <p className="text-xs text-dark-500">
+                12-19 chars: requires uppercase, lowercase, number, and special character. 20+ chars: any characters allowed.
+              </p>
             </div>
 
             <button

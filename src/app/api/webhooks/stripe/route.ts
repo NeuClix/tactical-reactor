@@ -3,6 +3,10 @@ import { stripe } from '@/lib/stripe'
 import { createServerComponentClient } from '@/lib/supabase-server'
 import Stripe from 'stripe'
 import { headers } from 'next/headers'
+import { validateTier } from '@/lib/validation'
+
+// UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -56,29 +60,35 @@ export async function POST(request: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription
         const userId = subscription.metadata?.userId
 
-        if (userId) {
-          const plan = subscription.items.data[0]?.price?.metadata?.tier || 'starter'
-
-          await supabase
-            .from('subscriptions')
-            .upsert({
-              user_id: userId,
-              stripe_subscription_id: subscription.id,
-              stripe_customer_id: subscription.customer as string,
-              status: subscription.status,
-              plan,
-              current_period_start: new Date(
-                subscription.current_period_start * 1000
-              ).toISOString(),
-              current_period_end: new Date(
-                subscription.current_period_end * 1000
-              ).toISOString(),
-              updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', userId)
-
-          processed = true
+        // Validate userId is a valid UUID
+        if (!userId || !UUID_REGEX.test(userId)) {
+          console.error('Invalid or missing userId in subscription metadata')
+          break
         }
+
+        // Validate and sanitize tier
+        const rawTier = subscription.items.data[0]?.price?.metadata?.tier || 'starter'
+        const plan = validateTier(rawTier) ? rawTier : 'starter'
+
+        await supabase
+          .from('subscriptions')
+          .upsert({
+            user_id: userId,
+            stripe_subscription_id: subscription.id,
+            stripe_customer_id: subscription.customer as string,
+            status: subscription.status,
+            plan,
+            current_period_start: new Date(
+              subscription.current_period_start * 1000
+            ).toISOString(),
+            current_period_end: new Date(
+              subscription.current_period_end * 1000
+            ).toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', userId)
+
+        processed = true
         break
       }
 
@@ -86,14 +96,18 @@ export async function POST(request: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription
         const userId = subscription.metadata?.userId
 
-        if (userId) {
-          await supabase
-            .from('subscriptions')
-            .update({ status: 'canceled', updated_at: new Date().toISOString() })
-            .eq('user_id', userId)
-
-          processed = true
+        // Validate userId is a valid UUID
+        if (!userId || !UUID_REGEX.test(userId)) {
+          console.error('Invalid or missing userId in subscription metadata')
+          break
         }
+
+        await supabase
+          .from('subscriptions')
+          .update({ status: 'canceled', updated_at: new Date().toISOString() })
+          .eq('user_id', userId)
+
+        processed = true
         break
       }
 
@@ -122,7 +136,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true })
   } catch (error) {
-    console.error('Webhook error:', error)
+    console.error('Webhook error:', error instanceof Error ? error.message : 'Unknown error')
     return NextResponse.json(
       { error: 'Webhook processing failed' },
       { status: 500 }

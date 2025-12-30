@@ -72,7 +72,7 @@ export default function SettingsPage() {
         setSubscription(subData)
       }
     } catch (error) {
-      console.error('Error loading user data:', error)
+      console.error('Error loading user data')
     } finally {
       setLoading(false)
     }
@@ -101,7 +101,7 @@ export default function SettingsPage() {
       setMessage({ type: 'success', text: 'Profile updated successfully!' })
       await loadUserData()
     } catch (error) {
-      console.error('Error updating profile:', error)
+      console.error('Error updating profile')
       setMessage({ type: 'error', text: 'Failed to update profile' })
     } finally {
       setSaving(false)
@@ -134,7 +134,7 @@ export default function SettingsPage() {
       setMessage({ type: 'success', text: 'Password updated successfully!' })
       setFormData((prev) => ({ ...prev, password: '', confirmPassword: '' }))
     } catch (error) {
-      console.error('Error updating password:', error)
+      console.error('Error updating password')
       setMessage({ type: 'error', text: 'Failed to update password' })
     } finally {
       setSaving(false)
