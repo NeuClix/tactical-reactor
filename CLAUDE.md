@@ -545,3 +545,14 @@ stripe listen --forward-to localhost:3000/api/webhooks/stripe
 - **Async**: Use async/await, handle errors explicitly with try/catch
 - **Comments**: Explain "why" not "what" — code should be self-documenting
 - **Types**: Prefer interfaces for objects, types for unions/primitives
+
+---
+
+## Agents & Skills
+
+See `.claude/` for specialized helpers:
+
+| Type | Available | Purpose |
+|------|-----------|---------|
+| **Agents** | api-builder, component-builder, database-architect, security-reviewer, stripe-integrator, test-engineer | Task-specific specialists |
+| **Skills** | api-security, nextjs-patterns, react-component-patterns, shadcn-ui-patterns, stripe-implementation, supabase-integration, typescript-guidelines | Pattern references |
