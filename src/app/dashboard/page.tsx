@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Zap, Sparkles, Palette, Image, Rocket, Brain } from 'lucide-react'
+import { Zap, Sparkles, Palette, Image as ImageIcon, Rocket, Brain } from 'lucide-react'
 
 export default function DashboardPage() {
   return (
@@ -110,13 +110,13 @@ function FeatureCard({
   href: string
   status: 'ready' | 'coming'
 }) {
-  const icons: Record<string, any> = {
-    'Content Hub': <Sparkles className="w-6 h-6" />,
-    'Gen Hub': <Zap className="w-6 h-6" />,
-    'Brand Hub': <Palette className="w-6 h-6" />,
-    'Media Hub': <Image className="w-6 h-6" />,
-    'Distribution Hub': <Rocket className="w-6 h-6" />,
-    'Intel Hub': <Brain className="w-6 h-6" />,
+  const icons: Record<string, React.ReactNode> = {
+    'Content Hub': <Sparkles className="w-6 h-6" aria-hidden="true" />,
+    'Gen Hub': <Zap className="w-6 h-6" aria-hidden="true" />,
+    'Brand Hub': <Palette className="w-6 h-6" aria-hidden="true" />,
+    'Media Hub': <ImageIcon className="w-6 h-6" aria-hidden="true" />,
+    'Distribution Hub': <Rocket className="w-6 h-6" aria-hidden="true" />,
+    'Intel Hub': <Brain className="w-6 h-6" aria-hidden="true" />,
   }
 
   return (

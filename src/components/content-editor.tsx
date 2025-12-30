@@ -7,8 +7,16 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
+interface ContentItemData {
+  id?: string
+  title?: string
+  content?: string
+  content_type?: 'blog' | 'social' | 'email' | 'page'
+  status?: 'draft' | 'published'
+}
+
 interface ContentEditorProps {
-  initialData?: any
+  initialData?: ContentItemData
   onSave: () => void
   title: string
   description: string
@@ -94,10 +102,11 @@ export default function ContentEditor({
         <CardContent className="space-y-6">
           {/* Title */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="content-title" className="text-sm font-medium text-slate-900">
               Title
             </label>
             <Input
+              id="content-title"
               placeholder="Enter content title"
               value={formData.title}
               onChange={(e) =>
@@ -108,10 +117,11 @@ export default function ContentEditor({
 
           {/* Content */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="content-body" className="text-sm font-medium text-slate-900">
               Content
             </label>
             <textarea
+              id="content-body"
               placeholder="Write your content here..."
               value={formData.content}
               onChange={(e) =>
@@ -123,10 +133,11 @@ export default function ContentEditor({
 
           {/* Content Type */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="content-type" className="text-sm font-medium text-slate-900">
               Content Type
             </label>
             <select
+              id="content-type"
               value={formData.content_type}
               onChange={(e) =>
                 setFormData({
@@ -145,10 +156,11 @@ export default function ContentEditor({
 
           {/* Status */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="content-status" className="text-sm font-medium text-slate-900">
               Status
             </label>
             <select
+              id="content-status"
               value={formData.status}
               onChange={(e) =>
                 setFormData({

@@ -135,10 +135,11 @@ export default function BrandHubPage() {
         <CardContent className="space-y-6">
           {/* Logo URL */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="logo-url" className="text-sm font-medium text-slate-900">
               Logo URL
             </label>
             <Input
+              id="logo-url"
               placeholder="https://example.com/logo.png"
               value={form.values.logo_url}
               onChange={(e) => form.setFieldValue('logo_url', e.target.value)}
@@ -150,17 +151,20 @@ export default function BrandHubPage() {
 
           {/* Primary Color */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="primary-color" className="text-sm font-medium text-slate-900">
               Primary Color
             </label>
             <div className="flex gap-2">
               <input
+                id="primary-color"
                 type="color"
                 value={form.values.primary_color}
                 onChange={(e) => form.setFieldValue('primary_color', e.target.value)}
                 className="h-10 w-20 rounded cursor-pointer"
+                aria-label="Primary color picker"
               />
               <Input
+                aria-label="Primary color hex value"
                 value={form.values.primary_color}
                 onChange={(e) => form.setFieldValue('primary_color', e.target.value)}
                 className="flex-1"
@@ -173,17 +177,20 @@ export default function BrandHubPage() {
 
           {/* Secondary Color */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="secondary-color" className="text-sm font-medium text-slate-900">
               Secondary Color
             </label>
             <div className="flex gap-2">
               <input
+                id="secondary-color"
                 type="color"
                 value={form.values.secondary_color}
                 onChange={(e) => form.setFieldValue('secondary_color', e.target.value)}
                 className="h-10 w-20 rounded cursor-pointer"
+                aria-label="Secondary color picker"
               />
               <Input
+                aria-label="Secondary color hex value"
                 value={form.values.secondary_color}
                 onChange={(e) => form.setFieldValue('secondary_color', e.target.value)}
                 className="flex-1"
@@ -196,10 +203,11 @@ export default function BrandHubPage() {
 
           {/* Font Family */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="font-family" className="text-sm font-medium text-slate-900">
               Font Family
             </label>
             <select
+              id="font-family"
               value={form.values.font_family}
               onChange={(e) => form.setFieldValue('font_family', e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-md bg-white text-sm"

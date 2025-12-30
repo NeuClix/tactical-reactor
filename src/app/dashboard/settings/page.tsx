@@ -169,10 +169,11 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="email" className="text-sm font-medium text-slate-900">
               Email
             </label>
             <Input
+              id="email"
               type="email"
               value={formData.email}
               disabled
@@ -182,10 +183,11 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="full-name" className="text-sm font-medium text-slate-900">
               Full Name
             </label>
             <Input
+              id="full-name"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -208,16 +210,18 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="new-password" className="text-sm font-medium text-slate-900">
               New Password
             </label>
             <Input
+              id="new-password"
               type="password"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
               placeholder="Enter new password"
+              autoComplete="new-password"
             />
             <div className="text-xs text-slate-500 mt-2 space-y-1">
               <p>Password must be at least 12 characters and contain:</p>
@@ -230,16 +234,18 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="confirm-password" className="text-sm font-medium text-slate-900">
               Confirm Password
             </label>
             <Input
+              id="confirm-password"
               type="password"
               value={formData.confirmPassword}
               onChange={(e) =>
                 setFormData({ ...formData, confirmPassword: e.target.value })
               }
               placeholder="Confirm new password"
+              autoComplete="new-password"
             />
           </div>
 

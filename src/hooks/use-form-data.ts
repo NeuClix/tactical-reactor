@@ -18,7 +18,7 @@ interface UseFormDataReturn<T> {
   handleSubmit: (e?: React.FormEvent) => Promise<void>
 }
 
-export function useFormData<T extends Record<string, unknown>>({
+export function useFormData<T extends object>({
   initialValues,
   onSubmit,
 }: UseFormDataOptions<T>): UseFormDataReturn<T> {

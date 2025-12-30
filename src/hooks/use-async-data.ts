@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 interface UseAsyncDataOptions<T> {
   fetchFn: () => Promise<T>
   dependencies?: unknown[]
-  initialData?: T
+  initialData?: T | null
   enabled?: boolean
 }
 
@@ -20,7 +20,7 @@ interface UseAsyncDataReturn<T> {
 export function useAsyncData<T>({
   fetchFn,
   dependencies = [],
-  initialData = null as T | null,
+  initialData = null,
   enabled = true,
 }: UseAsyncDataOptions<T>): UseAsyncDataReturn<T> {
   const [data, setData] = useState<T | null>(initialData)

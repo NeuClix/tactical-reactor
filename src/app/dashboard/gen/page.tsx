@@ -98,8 +98,8 @@ export default function GenHubPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Generation Type Selector */}
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-slate-900">
+          <div className="space-y-3" role="radiogroup" aria-labelledby="generation-type-label">
+            <label id="generation-type-label" className="text-sm font-medium text-slate-900">
               Generation Type
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -124,10 +124,11 @@ export default function GenHubPage() {
 
           {/* Prompt Input */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900">
+            <label htmlFor="prompt-input" className="text-sm font-medium text-slate-900">
               Your Prompt
             </label>
             <textarea
+              id="prompt-input"
               placeholder="Describe what you want to generate..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
