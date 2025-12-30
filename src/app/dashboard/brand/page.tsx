@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { PageLoading } from '@/components/ui/loading-spinner'
+import { useFormData, useNotification, useAsyncData, getAlertVariant } from '@/hooks'
 
 interface BrandProfile {
   id: string
@@ -19,32 +20,33 @@ interface BrandProfile {
   updated_at: string
 }
 
+interface BrandFormData {
+  logo_url: string
+  primary_color: string
+  secondary_color: string
+  font_family: string
+}
+
+const defaultFormData: BrandFormData = {
+  logo_url: '',
+  primary_color: '#3b82f6',
+  secondary_color: '#10b981',
+  font_family: 'Inter',
+}
+
 export default function BrandHubPage() {
   const supabase = createClient()
-  const [brand, setBrand] = useState<BrandProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const { notification, showSuccess, showError } = useNotification()
 
-  const [formData, setFormData] = useState({
-    logo_url: '',
-    primary_color: '#3b82f6',
-    secondary_color: '#10b981',
-    font_family: 'Inter',
-  })
-
-  useEffect(() => {
-    loadBrandProfile()
-  }, [])
-
-  const loadBrandProfile = async () => {
-    try {
-      setLoading(true)
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) return
+  // Load brand profile
+  const {
+    data: brand,
+    isLoading,
+    refetch,
+  } = useAsyncData<BrandProfile | null>({
+    fetchFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return null
 
       const { data, error } = await supabase
         .from('brand_profiles')
@@ -56,39 +58,31 @@ export default function BrandHubPage() {
         throw error
       }
 
-      if (data) {
-        setBrand(data)
-        setFormData({
-          logo_url: data.logo_url || '',
-          primary_color: data.primary_color || '#3b82f6',
-          secondary_color: data.secondary_color || '#10b981',
-          font_family: data.font_family || 'Inter',
-        })
-      }
-    } catch (error) {
-      console.error('Error loading brand profile:', error)
-      setMessage({ type: 'error', text: 'Failed to load brand profile' })
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data
+    },
+  })
 
-  const handleSave = async () => {
+  // Form state
+  const form = useFormData<BrandFormData>({
+    initialValues: brand ? {
+      logo_url: brand.logo_url || '',
+      primary_color: brand.primary_color || '#3b82f6',
+      secondary_color: brand.secondary_color || '#10b981',
+      font_family: brand.font_family || 'Inter',
+    } : defaultFormData,
+  })
+
+  // Update form when brand data loads
+  const handleSave = useCallback(async () => {
     try {
-      setSaving(true)
-      setMessage(null)
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
       if (brand) {
         // Update existing
         const { error } = await supabase
           .from('brand_profiles')
-          .update(formData)
+          .update(form.values)
           .eq('id', brand.id)
 
         if (error) throw error
@@ -96,23 +90,21 @@ export default function BrandHubPage() {
         // Create new
         const { error } = await supabase.from('brand_profiles').insert({
           user_id: user.id,
-          ...formData,
+          ...form.values,
         })
 
         if (error) throw error
       }
 
-      setMessage({ type: 'success', text: 'Brand profile saved successfully!' })
-      await loadBrandProfile()
+      showSuccess('Brand profile saved successfully!')
+      await refetch()
     } catch (error) {
       console.error('Error saving brand profile:', error)
-      setMessage({ type: 'error', text: 'Failed to save brand profile' })
-    } finally {
-      setSaving(false)
+      showError('Failed to save brand profile')
     }
-  }
+  }, [supabase, brand, form.values, showSuccess, showError, refetch])
 
-  if (loading) {
+  if (isLoading) {
     return <PageLoading message="Loading brand profile..." />
   }
 
@@ -127,9 +119,9 @@ export default function BrandHubPage() {
         </p>
       </div>
 
-      {message && (
-        <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-          <AlertDescription>{message.text}</AlertDescription>
+      {notification && (
+        <Alert variant={getAlertVariant(notification.type)}>
+          <AlertDescription>{notification.message}</AlertDescription>
         </Alert>
       )}
 
@@ -148,10 +140,8 @@ export default function BrandHubPage() {
             </label>
             <Input
               placeholder="https://example.com/logo.png"
-              value={formData.logo_url}
-              onChange={(e) =>
-                setFormData({ ...formData, logo_url: e.target.value })
-              }
+              value={form.values.logo_url}
+              onChange={(e) => form.setFieldValue('logo_url', e.target.value)}
             />
             <p className="text-xs text-slate-500">
               URL to your brand logo image
@@ -166,17 +156,13 @@ export default function BrandHubPage() {
             <div className="flex gap-2">
               <input
                 type="color"
-                value={formData.primary_color}
-                onChange={(e) =>
-                  setFormData({ ...formData, primary_color: e.target.value })
-                }
+                value={form.values.primary_color}
+                onChange={(e) => form.setFieldValue('primary_color', e.target.value)}
                 className="h-10 w-20 rounded cursor-pointer"
               />
               <Input
-                value={formData.primary_color}
-                onChange={(e) =>
-                  setFormData({ ...formData, primary_color: e.target.value })
-                }
+                value={form.values.primary_color}
+                onChange={(e) => form.setFieldValue('primary_color', e.target.value)}
                 className="flex-1"
               />
             </div>
@@ -193,17 +179,13 @@ export default function BrandHubPage() {
             <div className="flex gap-2">
               <input
                 type="color"
-                value={formData.secondary_color}
-                onChange={(e) =>
-                  setFormData({ ...formData, secondary_color: e.target.value })
-                }
+                value={form.values.secondary_color}
+                onChange={(e) => form.setFieldValue('secondary_color', e.target.value)}
                 className="h-10 w-20 rounded cursor-pointer"
               />
               <Input
-                value={formData.secondary_color}
-                onChange={(e) =>
-                  setFormData({ ...formData, secondary_color: e.target.value })
-                }
+                value={form.values.secondary_color}
+                onChange={(e) => form.setFieldValue('secondary_color', e.target.value)}
                 className="flex-1"
               />
             </div>
@@ -218,10 +200,8 @@ export default function BrandHubPage() {
               Font Family
             </label>
             <select
-              value={formData.font_family}
-              onChange={(e) =>
-                setFormData({ ...formData, font_family: e.target.value })
-              }
+              value={form.values.font_family}
+              onChange={(e) => form.setFieldValue('font_family', e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-md bg-white text-sm"
             >
               <option>Inter</option>
@@ -242,27 +222,27 @@ export default function BrandHubPage() {
               <div className="flex items-center gap-3">
                 <div
                   className="h-12 w-12 rounded"
-                  style={{ backgroundColor: formData.primary_color }}
+                  style={{ backgroundColor: form.values.primary_color }}
                 />
                 <span className="text-sm text-slate-600">
-                  Primary: {formData.primary_color}
+                  Primary: {form.values.primary_color}
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <div
                   className="h-12 w-12 rounded"
-                  style={{ backgroundColor: formData.secondary_color }}
+                  style={{ backgroundColor: form.values.secondary_color }}
                 />
                 <span className="text-sm text-slate-600">
-                  Secondary: {formData.secondary_color}
+                  Secondary: {form.values.secondary_color}
                 </span>
               </div>
               <div>
                 <p
                   className="text-sm"
-                  style={{ fontFamily: formData.font_family }}
+                  style={{ fontFamily: form.values.font_family }}
                 >
-                  Font: {formData.font_family}
+                  Font: {form.values.font_family}
                 </p>
               </div>
             </div>
@@ -270,10 +250,10 @@ export default function BrandHubPage() {
 
           <Button
             onClick={handleSave}
-            disabled={saving}
+            disabled={form.isSubmitting}
             className="w-full"
           >
-            {saving ? 'Saving...' : 'Save Brand Settings'}
+            {form.isSubmitting ? 'Saving...' : 'Save Brand Settings'}
           </Button>
         </CardContent>
       </Card>

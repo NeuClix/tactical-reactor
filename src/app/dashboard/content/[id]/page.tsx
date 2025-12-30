@@ -1,36 +1,39 @@
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { PageLoading } from '@/components/ui/loading-spinner'
 import ContentEditor from '@/components/content-editor'
+import { useAsyncData } from '@/hooks'
+
+interface ContentItem {
+  id: string
+  user_id: string
+  title: string
+  content: string
+  status: 'draft' | 'published'
+  created_at: string
+  updated_at: string
+}
 
 export default function EditContentPage() {
   const params = useParams()
   const router = useRouter()
   const supabase = createClient()
-  const [content, setContent] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
   const id = params.id as string
 
-  useEffect(() => {
-    loadContent()
-  }, [id])
-
-  const loadContent = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
+  const {
+    data: content,
+    isLoading,
+    error,
+  } = useAsyncData<ContentItem | null>({
+    fetchFn: async () => {
       // Get current user first
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
         router.push('/auth/login')
-        return
+        return null
       }
 
       // Explicit user_id check for defense-in-depth (RLS also protects)
@@ -44,30 +47,24 @@ export default function EditContentPage() {
       if (queryError) {
         if (queryError.code === 'PGRST116') {
           // No rows returned - either doesn't exist or not owned by user
-          setError('Content not found or access denied')
-        } else {
-          throw queryError
+          throw new Error('Content not found or access denied')
         }
-        return
+        throw queryError
       }
 
-      setContent(data)
-    } catch (err) {
-      console.error('Error loading content:', err)
-      setError('Failed to load content')
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data
+    },
+    dependencies: [id],
+  })
 
-  if (loading) {
+  if (isLoading) {
     return <PageLoading message="Loading content..." />
   }
 
   if (error || !content) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-400">{error || 'Content not found'}</p>
+        <p className="text-red-400">{error?.message || 'Content not found'}</p>
         <button
           onClick={() => router.push('/dashboard/content')}
           className="mt-4 text-accent-400 hover:underline"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,10 +9,11 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { PageLoading } from '@/components/ui/loading-spinner'
 import { validatePassword } from '@/lib/validation'
+import { useAsyncData, useNotification, getAlertVariant } from '@/hooks'
 
 interface UserProfile {
   email: string
-  name?: string
+  name: string
 }
 
 interface Subscription {
@@ -22,14 +23,16 @@ interface Subscription {
   current_period_end: string
 }
 
+interface UserData {
+  profile: UserProfile
+  subscription: Subscription | null
+}
+
 export default function SettingsPage() {
   const supabase = createClient()
-  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const { notification, showSuccess, showError } = useNotification()
 
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -37,24 +40,24 @@ export default function SettingsPage() {
     confirmPassword: '',
   })
 
-  useEffect(() => {
-    loadUserData()
-  }, [])
-
-  const loadUserData = async () => {
-    try {
-      setLoading(true)
+  const {
+    data: userData,
+    isLoading,
+    refetch,
+  } = useAsyncData<UserData | null>({
+    fetchFn: async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
-      if (!user) return
+      if (!user) return null
 
-      setProfile({
+      const profile: UserProfile = {
         email: user.email || '',
         name: user.user_metadata?.name || '',
-      })
+      }
 
+      // Initialize form data
       setFormData({
         email: user.email || '',
         name: user.user_metadata?.name || '',
@@ -69,20 +72,16 @@ export default function SettingsPage() {
         .eq('user_id', user.id)
         .single()
 
-      if (subData) {
-        setSubscription(subData)
+      return {
+        profile,
+        subscription: subData || null,
       }
-    } catch (error) {
-      console.error('Error loading user data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+  })
 
-  const handleUpdateProfile = async () => {
+  const handleUpdateProfile = useCallback(async () => {
     try {
       setSaving(true)
-      setMessage(null)
 
       const {
         data: { user },
@@ -99,32 +98,31 @@ export default function SettingsPage() {
 
       if (error) throw error
 
-      setMessage({ type: 'success', text: 'Profile updated successfully!' })
-      await loadUserData()
+      showSuccess('Profile updated successfully!')
+      await refetch()
     } catch (error) {
       console.error('Error updating profile:', error)
-      setMessage({ type: 'error', text: 'Failed to update profile' })
+      showError('Failed to update profile')
     } finally {
       setSaving(false)
     }
-  }
+  }, [supabase, formData.name, showSuccess, showError, refetch])
 
-  const handleUpdatePassword = async () => {
+  const handleUpdatePassword = useCallback(async () => {
     if (formData.password !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' })
+      showError('Passwords do not match')
       return
     }
 
     // Validate password strength
     const passwordValidation = validatePassword(formData.password)
     if (!passwordValidation.valid) {
-      setMessage({ type: 'error', text: passwordValidation.error || 'Invalid password' })
+      showError(passwordValidation.error || 'Invalid password')
       return
     }
 
     try {
       setSaving(true)
-      setMessage(null)
 
       const { error } = await supabase.auth.updateUser({
         password: formData.password,
@@ -132,17 +130,17 @@ export default function SettingsPage() {
 
       if (error) throw error
 
-      setMessage({ type: 'success', text: 'Password updated successfully!' })
+      showSuccess('Password updated successfully!')
       setFormData((prev) => ({ ...prev, password: '', confirmPassword: '' }))
     } catch (error) {
       console.error('Error updating password:', error)
-      setMessage({ type: 'error', text: 'Failed to update password' })
+      showError('Failed to update password')
     } finally {
       setSaving(false)
     }
-  }
+  }, [supabase, formData.password, formData.confirmPassword, showSuccess, showError])
 
-  if (loading) {
+  if (isLoading) {
     return <PageLoading message="Loading settings..." />
   }
 
@@ -157,9 +155,9 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {message && (
-        <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-          <AlertDescription>{message.text}</AlertDescription>
+      {notification && (
+        <Alert variant={getAlertVariant(notification.type)}>
+          <AlertDescription>{notification.message}</AlertDescription>
         </Alert>
       )}
 
@@ -255,7 +253,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* Subscription Card */}
-      {subscription && (
+      {userData?.subscription && (
         <Card>
           <CardHeader>
             <CardTitle>Subscription</CardTitle>
@@ -265,22 +263,22 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-slate-900">
-                  Plan: {subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)}
+                  Plan: {userData.subscription.plan.charAt(0).toUpperCase() + userData.subscription.plan.slice(1)}
                 </p>
                 <div className="text-sm text-slate-600 flex items-center gap-2">
                   <span>Status:</span>
                   <Badge
                     variant={
-                      subscription.status === 'active' ? 'default' : 'secondary'
+                      userData.subscription.status === 'active' ? 'default' : 'secondary'
                     }
                   >
-                    {subscription.status}
+                    {userData.subscription.status}
                   </Badge>
                 </div>
-                {subscription.current_period_end && (
+                {userData.subscription.current_period_end && (
                   <p className="text-sm text-slate-600 mt-2">
                     Renews:{' '}
-                    {new Date(subscription.current_period_end).toLocaleDateString()}
+                    {new Date(userData.subscription.current_period_end).toLocaleDateString()}
                   </p>
                 )}
               </div>

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { PageLoading } from '@/components/ui/loading-spinner'
 import { useConfirmDialog } from '@/components/ui/confirm-dialog'
+import { useAsyncData } from '@/hooks'
 import Link from 'next/link'
 import { Plus, Trash2, Eye } from 'lucide-react'
 
@@ -22,23 +23,17 @@ interface ContentItem {
 
 export default function ContentHubPage() {
   const supabase = createClient()
-  const [items, setItems] = useState<ContentItem[]>([])
-  const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState<string | null>(null)
   const { confirm, ConfirmDialog } = useConfirmDialog()
 
-  useEffect(() => {
-    loadContent()
-  }, [])
-
-  const loadContent = async () => {
-    try {
-      setLoading(true)
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) return
+  const {
+    data: items,
+    isLoading,
+    setData: setItems,
+  } = useAsyncData<ContentItem[]>({
+    fetchFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return []
 
       const { data, error } = await supabase
         .from('content_items')
@@ -47,16 +42,12 @@ export default function ContentHubPage() {
         .order('updated_at', { ascending: false })
 
       if (error) throw error
+      return data || []
+    },
+    initialData: [],
+  })
 
-      setItems(data || [])
-    } catch (error) {
-      console.error('Error loading content:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     const confirmed = await confirm({
       title: 'Delete Content',
       description: 'Are you sure you want to delete this content? This action cannot be undone.',
@@ -76,15 +67,15 @@ export default function ContentHubPage() {
 
       if (error) throw error
 
-      setItems(items.filter((item) => item.id !== id))
+      setItems((items || []).filter((item) => item.id !== id))
     } catch (error) {
       console.error('Error deleting content:', error)
     } finally {
       setDeleting(null)
     }
-  }
+  }, [supabase, confirm, items, setItems])
 
-  if (loading) {
+  if (isLoading) {
     return <PageLoading message="Loading content..." />
   }
 
@@ -107,7 +98,7 @@ export default function ContentHubPage() {
         </Link>
       </div>
 
-      {items.length === 0 ? (
+      {!items || items.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
             <h3 className="text-lg font-medium text-slate-900 mb-2">
