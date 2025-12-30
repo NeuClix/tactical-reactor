@@ -75,10 +75,10 @@ export default function GenHubPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-dark-50">
           Gen Hub
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-dark-300">
           Generate content using AI powered by Anthropic Claude
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function GenHubPage() {
         <CardContent className="space-y-6">
           {/* Generation Type Selector */}
           <div className="space-y-3" role="radiogroup" aria-labelledby="generation-type-label">
-            <label id="generation-type-label" className="text-sm font-medium text-slate-900">
+            <label id="generation-type-label" className="text-sm font-medium text-dark-50">
               Generation Type
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -109,12 +109,12 @@ export default function GenHubPage() {
                   onClick={() => setType(t.value)}
                   className={`p-3 rounded-lg border-2 text-left transition-colors ${
                     type === t.value
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-slate-200 hover:border-slate-300'
+                      ? 'border-primary-500 bg-primary-500/10'
+                      : 'border-dark-700 hover:border-dark-600'
                   }`}
                 >
-                  <div className="font-medium text-sm">{t.label}</div>
-                  <div className="text-xs text-slate-600 mt-1">
+                  <div className="font-medium text-sm text-dark-100">{t.label}</div>
+                  <div className="text-xs text-dark-400 mt-1">
                     {t.description}
                   </div>
                 </button>
@@ -124,7 +124,7 @@ export default function GenHubPage() {
 
           {/* Prompt Input */}
           <div className="space-y-2">
-            <label htmlFor="prompt-input" className="text-sm font-medium text-slate-900">
+            <label htmlFor="prompt-input" className="text-sm font-medium text-dark-50">
               Your Prompt
             </label>
             <textarea
@@ -132,7 +132,7 @@ export default function GenHubPage() {
               placeholder="Describe what you want to generate..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-slate-200 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-32 px-3 py-2 border border-dark-600 rounded-md text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 bg-dark-800 text-dark-100 placeholder:text-dark-400"
             />
           </div>
 
@@ -184,7 +184,7 @@ export default function GenHubPage() {
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="bg-slate-50 p-4 rounded-lg whitespace-pre-wrap text-sm text-slate-700">
+            <div className="bg-dark-800 p-4 rounded-lg whitespace-pre-wrap text-sm text-dark-200">
               {result.response}
             </div>
           </CardContent>

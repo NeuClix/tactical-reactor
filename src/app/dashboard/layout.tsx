@@ -1,8 +1,7 @@
 import { createServerComponentClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/ui/logo'
 import { LayoutDashboard, FileText, Zap, Palette, Settings, LogOut } from 'lucide-react'
 
 export default async function DashboardLayout({
@@ -29,17 +28,10 @@ export default async function DashboardLayout({
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-primary-500/10 bg-gradient-to-b from-dark-900 to-dark-950 shadow-lg flex flex-col">
+      <aside className="w-64 border-r shadow-lg flex flex-col border-gray-200 bg-white dark:border-primary-500/10 dark:bg-gradient-to-b dark:from-dark-900 dark:to-dark-950">
         {/* Logo Section */}
-        <div className="p-6 border-b border-primary-500/10">
-          <Image
-            src="/tactical-reactor-logo.png"
-            alt="Tactical Reactor Logo"
-            width={200}
-            height={60}
-            className="h-auto w-full object-contain"
-            priority
-          />
+        <div className="p-6 border-b border-gray-200 dark:border-primary-500/10">
+          <Logo size="md" showTagline linkToHome />
         </div>
 
         {/* Navigation */}
@@ -72,14 +64,14 @@ export default async function DashboardLayout({
         </nav>
 
         {/* User Section */}
-        <div className="border-t border-primary-500/10 p-4 space-y-4">
-          <div className="card-glass p-3 rounded">
-            <p className="text-xs text-dark-400 truncate">{user.email}</p>
+        <div className="border-t p-4 space-y-4 border-gray-200 dark:border-primary-500/10">
+          <div className="p-3 rounded bg-gray-100 dark:bg-dark-800/50">
+            <p className="text-xs truncate text-gray-600 dark:text-dark-400">{user.email}</p>
           </div>
           <form action={handleLogout} className="w-full">
             <button
               type="submit"
-              className="w-full px-4 py-2 rounded-lg text-sm font-medium text-dark-300 border border-primary-500/20 hover:border-primary-400/50 hover:text-primary-300 transition-all flex items-center justify-center gap-2"
+              className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 text-gray-600 border border-gray-300 hover:border-primary-500/50 hover:text-primary-600 dark:text-dark-300 dark:border-primary-500/20 dark:hover:border-primary-400/50 dark:hover:text-primary-300"
             >
               <LogOut className="w-4 h-4" />
               Sign Out
@@ -89,7 +81,7 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-gray-100 dark:bg-transparent">
         <div className="p-8">
           {children}
         </div>
@@ -110,9 +102,9 @@ function SidebarLink({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-4 py-2 rounded-lg text-dark-300 hover:text-dark-50 hover:bg-primary-500/10 transition-all text-sm font-medium group"
+      className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all text-sm font-medium group text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-dark-300 dark:hover:text-dark-50 dark:hover:bg-primary-500/10"
     >
-      {icon && <span className="text-primary-400 group-hover:text-primary-300 transition-colors">{icon}</span>}
+      {icon && <span className="text-primary-500 group-hover:text-primary-600 dark:text-primary-400 dark:group-hover:text-primary-300 transition-colors">{icon}</span>}
       {label}
     </Link>
   )

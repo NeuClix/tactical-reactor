@@ -23,23 +23,23 @@ interface ConfirmDialogProps {
 
 const variantConfig: Record<DialogVariant, { icon: React.ReactNode; iconBg: string; buttonVariant: 'default' | 'destructive' }> = {
   default: {
-    icon: <Info className="h-6 w-6 text-blue-600" />,
-    iconBg: 'bg-blue-100',
+    icon: <Info className="h-6 w-6 text-primary-400" />,
+    iconBg: 'bg-primary-500/20',
     buttonVariant: 'default',
   },
   destructive: {
-    icon: <AlertCircle className="h-6 w-6 text-red-600" />,
-    iconBg: 'bg-red-100',
+    icon: <AlertCircle className="h-6 w-6 text-red-400" />,
+    iconBg: 'bg-red-500/20',
     buttonVariant: 'destructive',
   },
   warning: {
-    icon: <AlertTriangle className="h-6 w-6 text-amber-600" />,
-    iconBg: 'bg-amber-100',
+    icon: <AlertTriangle className="h-6 w-6 text-amber-400" />,
+    iconBg: 'bg-amber-500/20',
     buttonVariant: 'default',
   },
   success: {
-    icon: <CheckCircle className="h-6 w-6 text-green-600" />,
-    iconBg: 'bg-green-100',
+    icon: <CheckCircle className="h-6 w-6 text-green-400" />,
+    iconBg: 'bg-green-500/20',
     buttonVariant: 'default',
   },
 }
@@ -125,12 +125,12 @@ export function ConfirmDialog({
 
       {/* Dialog */}
       <div className="relative z-50 w-full max-w-md mx-4 animate-in fade-in zoom-in-95 duration-200">
-        <div className="rounded-lg bg-white shadow-xl">
+        <div className="rounded-lg shadow-xl bg-gray-50 border border-gray-200 dark:bg-dark-900 dark:border-primary-500/20" style={{ boxShadow: '0 0 40px rgba(91, 135, 255, 0.1)' }}>
           {/* Close button */}
           <button
             onClick={handleCancel}
             disabled={isConfirming}
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-white transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none"
+            className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:pointer-events-none text-gray-400 hover:text-gray-600 ring-offset-white dark:text-dark-400 dark:hover:text-dark-200 dark:ring-offset-dark-900"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -146,12 +146,12 @@ export function ConfirmDialog({
             <div className="text-center">
               <h2
                 id="confirm-dialog-title"
-                className="text-lg font-semibold text-slate-900"
+                className="text-lg font-semibold text-gray-900 dark:text-dark-50"
               >
                 {title}
               </h2>
               {description && (
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="mt-2 text-sm text-gray-600 dark:text-dark-300">
                   {description}
                 </p>
               )}

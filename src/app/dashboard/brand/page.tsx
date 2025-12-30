@@ -111,10 +111,10 @@ export default function BrandHubPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-dark-50">
           Brand Hub
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-dark-300">
           Customize your brand identity with logos, colors, and fonts
         </p>
       </div>
@@ -135,7 +135,7 @@ export default function BrandHubPage() {
         <CardContent className="space-y-6">
           {/* Logo URL */}
           <div className="space-y-2">
-            <label htmlFor="logo-url" className="text-sm font-medium text-slate-900">
+            <label htmlFor="logo-url" className="text-sm font-medium text-dark-50">
               Logo URL
             </label>
             <Input
@@ -144,14 +144,14 @@ export default function BrandHubPage() {
               value={form.values.logo_url}
               onChange={(e) => form.setFieldValue('logo_url', e.target.value)}
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-dark-400">
               URL to your brand logo image
             </p>
           </div>
 
           {/* Primary Color */}
           <div className="space-y-2">
-            <label htmlFor="primary-color" className="text-sm font-medium text-slate-900">
+            <label htmlFor="primary-color" className="text-sm font-medium text-dark-50">
               Primary Color
             </label>
             <div className="flex gap-2">
@@ -170,14 +170,14 @@ export default function BrandHubPage() {
                 className="flex-1"
               />
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-dark-400">
               Your brand&apos;s main color (hex format)
             </p>
           </div>
 
           {/* Secondary Color */}
           <div className="space-y-2">
-            <label htmlFor="secondary-color" className="text-sm font-medium text-slate-900">
+            <label htmlFor="secondary-color" className="text-sm font-medium text-dark-50">
               Secondary Color
             </label>
             <div className="flex gap-2">
@@ -196,21 +196,21 @@ export default function BrandHubPage() {
                 className="flex-1"
               />
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-dark-400">
               Your brand&apos;s accent color (hex format)
             </p>
           </div>
 
           {/* Font Family */}
           <div className="space-y-2">
-            <label htmlFor="font-family" className="text-sm font-medium text-slate-900">
+            <label htmlFor="font-family" className="text-sm font-medium text-dark-50">
               Font Family
             </label>
             <select
               id="font-family"
               value={form.values.font_family}
               onChange={(e) => form.setFieldValue('font_family', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-md bg-white text-sm"
+              className="w-full px-3 py-2 border border-dark-600 rounded-md bg-dark-800 text-dark-100 text-sm"
             >
               <option>Inter</option>
               <option>Helvetica</option>
@@ -218,21 +218,21 @@ export default function BrandHubPage() {
               <option>Georgia</option>
               <option>Courier New</option>
             </select>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-dark-400">
               Default font family for your brand
             </p>
           </div>
 
           {/* Preview */}
-          <div className="border-t pt-6">
-            <h3 className="font-semibold text-slate-900 mb-4">Preview</h3>
+          <div className="border-t border-dark-700 pt-6">
+            <h3 className="font-semibold text-dark-50 mb-4">Preview</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div
                   className="h-12 w-12 rounded"
                   style={{ backgroundColor: form.values.primary_color }}
                 />
-                <span className="text-sm text-slate-600">
+                <span className="text-sm text-dark-300">
                   Primary: {form.values.primary_color}
                 </span>
               </div>
@@ -241,7 +241,7 @@ export default function BrandHubPage() {
                   className="h-12 w-12 rounded"
                   style={{ backgroundColor: form.values.secondary_color }}
                 />
-                <span className="text-sm text-slate-600">
+                <span className="text-sm text-dark-300">
                   Secondary: {form.values.secondary_color}
                 </span>
               </div>

@@ -2,63 +2,302 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for dynamic palette colors */
+:root {
+  /* Default to cyberpunk-blue for dark */
+  --palette-primary: 91, 135, 255;
+  --palette-primary-hex: #5b87ff;
+  --palette-accent: 127, 168, 255;
+  --palette-accent-hex: #7fa8ff;
+  --palette-gradient: linear-gradient(135deg, #5b87ff 0%, #a855f7 50%, #ff006e 100%);
+}
+
+/* Dark Theme Palettes */
+.dark[data-palette="cyberpunk-blue"] {
+  --palette-primary: 91, 135, 255;
+  --palette-primary-hex: #5b87ff;
+  --palette-accent: 127, 168, 255;
+  --palette-accent-hex: #7fa8ff;
+  --palette-gradient: linear-gradient(135deg, #5b87ff 0%, #a855f7 50%, #ff006e 100%);
+}
+
+.dark[data-palette="cyberpunk-purple"] {
+  --palette-primary: 168, 85, 247;
+  --palette-primary-hex: #a855f7;
+  --palette-accent: 192, 132, 252;
+  --palette-accent-hex: #c084fc;
+  --palette-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+}
+
+.dark[data-palette="neon-cyan"] {
+  --palette-primary: 6, 182, 212;
+  --palette-primary-hex: #06b6d4;
+  --palette-accent: 34, 211, 238;
+  --palette-accent-hex: #22d3ee;
+  --palette-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #a855f7 100%);
+}
+
+.dark[data-palette="hot-pink"] {
+  --palette-primary: 236, 72, 153;
+  --palette-primary-hex: #ec4899;
+  --palette-accent: 244, 114, 182;
+  --palette-accent-hex: #f472b6;
+  --palette-gradient: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
+}
+
+/* Light Theme Palettes */
+.light[data-palette="professional-blue"] {
+  --palette-primary: 37, 99, 235;
+  --palette-primary-hex: #2563eb;
+  --palette-accent: 59, 130, 246;
+  --palette-accent-hex: #3b82f6;
+  --palette-gradient: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+}
+
+.light[data-palette="forest-green"] {
+  --palette-primary: 5, 150, 105;
+  --palette-primary-hex: #059669;
+  --palette-accent: 16, 185, 129;
+  --palette-accent-hex: #10b981;
+  --palette-gradient: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+}
+
+.light[data-palette="warm-orange"] {
+  --palette-primary: 234, 88, 12;
+  --palette-primary-hex: #ea580c;
+  --palette-accent: 249, 115, 22;
+  --palette-accent-hex: #f97316;
+  --palette-gradient: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+}
+
+.light[data-palette="royal-purple"] {
+  --palette-primary: 124, 58, 237;
+  --palette-primary-hex: #7c3aed;
+  --palette-accent: 139, 92, 246;
+  --palette-accent-hex: #8b5cf6;
+  --palette-gradient: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+}
+
+/* Reduce motion */
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
 @layer base {
   * {
     @apply border-primary-200/20;
   }
 
-  body {
+  /* Dark mode base styles */
+  .dark body {
     @apply bg-gradient-to-br from-dark-950 via-dark-900 to-dark-950 text-dark-100;
     background-attachment: fixed;
   }
 
-  h1 {
-    @apply text-4xl font-bold bg-clip-text text-transparent bg-gradient-tech;
+  /* Light mode base styles */
+  .light body {
+    @apply bg-gradient-to-br from-gray-50 via-white to-gray-100 text-gray-800;
+    background-attachment: fixed;
   }
 
-  h2 {
+  /* Headings - Dark */
+  .dark h1 {
+    @apply text-4xl font-bold bg-clip-text text-transparent;
+    background-image: var(--palette-gradient);
+  }
+
+  .dark h2 {
     @apply text-3xl font-bold text-dark-50;
   }
 
-  h3 {
+  .dark h3 {
     @apply text-xl font-semibold text-dark-100;
   }
 
-  p {
+  .dark p {
     @apply text-dark-300;
   }
 
-  a {
-    @apply text-primary-400 hover:text-primary-300 transition-colors;
+  .dark a {
+    @apply hover:opacity-80 transition-colors;
+    color: var(--palette-accent-hex);
+  }
+
+  /* Headings - Light */
+  .light h1 {
+    @apply text-4xl font-bold bg-clip-text text-transparent;
+    background-image: var(--palette-gradient);
+  }
+
+  .light h2 {
+    @apply text-3xl font-bold text-gray-900;
+  }
+
+  .light h3 {
+    @apply text-xl font-semibold text-gray-800;
+  }
+
+  .light p {
+    @apply text-gray-600;
+  }
+
+  .light a {
+    @apply hover:opacity-80 transition-colors;
+    color: var(--palette-primary-hex);
   }
 }
 
 @layer components {
-  .card-glass {
+  /* Glass card - Dark */
+  .dark .card-glass {
     @apply backdrop-blur-md bg-dark-800/40 border border-primary-500/20 rounded-lg;
   }
 
-  .card-gradient {
-    @apply bg-gradient-to-br from-primary-600/10 to-accent-600/10 border border-primary-400/30 rounded-lg;
+  /* Glass card - Light */
+  .light .card-glass {
+    @apply backdrop-blur-md bg-white/70 border border-gray-200 rounded-lg shadow-sm;
   }
 
+  /* Gradient card - Dark */
+  .dark .card-gradient {
+    @apply bg-dark-900 border rounded-lg;
+    border-color: rgba(var(--palette-primary), 0.3);
+  }
+
+  /* Gradient card - Light */
+  .light .card-gradient {
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm;
+  }
+
+  /* Primary button - both themes */
   .btn-primary {
-    @apply px-4 py-2 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold hover:from-primary-600 hover:to-primary-700 transition-all shadow-glow hover:shadow-glow hover:scale-105;
+    @apply px-4 py-2 rounded-lg text-white font-semibold transition-all hover:scale-105;
+    background-image: var(--palette-gradient);
   }
 
-  .btn-secondary {
-    @apply px-4 py-2 rounded-lg border border-primary-400/50 text-primary-300 font-semibold hover:border-primary-300 hover:bg-primary-500/10 transition-all;
+  .dark .btn-primary {
+    @apply shadow-glow hover:shadow-glow;
   }
 
-  .text-glow {
-    @apply text-primary-300 drop-shadow-lg;
+  .light .btn-primary {
+    @apply shadow-md hover:shadow-lg;
   }
 
+  /* Secondary button - Dark */
+  .dark .btn-secondary {
+    @apply px-4 py-2 rounded-lg border font-semibold transition-all;
+    border-color: rgba(var(--palette-primary), 0.5);
+    color: var(--palette-accent-hex);
+  }
+
+  .dark .btn-secondary:hover {
+    border-color: var(--palette-accent-hex);
+    background-color: rgba(var(--palette-primary), 0.1);
+  }
+
+  /* Secondary button - Light */
+  .light .btn-secondary {
+    @apply px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all;
+  }
+
+  /* Text glow - Dark only */
+  .dark .text-glow {
+    @apply drop-shadow-lg;
+    color: var(--palette-accent-hex);
+  }
+
+  .light .text-glow {
+    color: var(--palette-primary-hex);
+  }
+
+  /* Gradient text */
   .gradient-text-tech {
-    @apply bg-gradient-tech bg-clip-text text-transparent;
+    @apply bg-clip-text text-transparent;
+    background-image: var(--palette-gradient);
   }
 
-  .glass-effect {
+  /* Glass effect - Dark */
+  .dark .glass-effect {
     @apply backdrop-blur-md bg-dark-900/50 border border-white/5;
+  }
+
+  /* Glass effect - Light */
+  .light .glass-effect {
+    @apply backdrop-blur-md bg-white/80 border border-gray-200;
+  }
+
+  /* Modal/Dialog styles */
+  .dark .modal-content {
+    @apply bg-dark-900 border rounded-lg;
+    border-color: rgba(var(--palette-primary), 0.2);
+    box-shadow: 0 0 40px rgba(var(--palette-primary), 0.1);
+  }
+
+  .light .modal-content {
+    @apply bg-white border border-gray-200 rounded-lg shadow-xl;
+  }
+
+  /* Input styles */
+  .dark .input-themed {
+    @apply bg-dark-800 border-dark-600 text-dark-100 placeholder:text-dark-400;
+  }
+
+  .dark .input-themed:focus {
+    border-color: var(--palette-primary-hex);
+  }
+
+  .light .input-themed {
+    @apply bg-white border-gray-300 text-gray-900 placeholder:text-gray-400;
+  }
+
+  .light .input-themed:focus {
+    border-color: var(--palette-primary-hex);
+  }
+
+  /* Card component styles */
+  .dark .card-themed {
+    @apply bg-dark-900 border-dark-700 text-dark-50;
+  }
+
+  .light .card-themed {
+    @apply bg-white border-gray-200 text-gray-900;
+  }
+
+  /* Badge styles */
+  .dark .badge-themed {
+    @apply bg-dark-800 text-dark-200;
+  }
+
+  .light .badge-themed {
+    @apply bg-gray-100 text-gray-700;
+  }
+
+  /* High contrast mode adjustments */
+  .high-contrast.dark body {
+    @apply text-white;
+  }
+
+  .high-contrast.dark h2,
+  .high-contrast.dark h3 {
+    @apply text-white;
+  }
+
+  .high-contrast.dark p {
+    @apply text-dark-100;
+  }
+
+  .high-contrast.light body {
+    @apply text-black;
+  }
+
+  .high-contrast.light h2,
+  .high-contrast.light h3 {
+    @apply text-black;
+  }
+
+  .high-contrast.light p {
+    @apply text-gray-900;
   }
 }

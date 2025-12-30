@@ -5,15 +5,18 @@ import { createClient } from '@/lib/supabase'
 import { PageLoading } from '@/components/ui/loading-spinner'
 import ContentEditor from '@/components/content-editor'
 import { useAsyncData } from '@/hooks'
+import type { Tag } from '@/types'
 
 interface ContentItem {
   id: string
   user_id: string
   title: string
   content: string
+  content_type: 'blog' | 'social' | 'email' | 'page'
   status: 'draft' | 'published'
   created_at: string
   updated_at: string
+  tags?: Tag[]
 }
 
 export default function EditContentPage() {
@@ -39,7 +42,12 @@ export default function EditContentPage() {
       // Explicit user_id check for defense-in-depth (RLS also protects)
       const { data, error: queryError } = await supabase
         .from('content_items')
-        .select('*')
+        .select(`
+          *,
+          content_item_tags (
+            tag:tags (id, user_id, name, color, created_at, updated_at)
+          )
+        `)
         .eq('id', id)
         .eq('user_id', user.id)
         .single()
@@ -52,7 +60,12 @@ export default function EditContentPage() {
         throw queryError
       }
 
-      return data
+      // Transform the nested tags structure
+      const tags = data.content_item_tags
+        ?.map((cit: { tag: Tag }) => cit.tag)
+        .filter(Boolean) || []
+
+      return { ...data, tags }
     },
     dependencies: [id],
   })
