@@ -92,7 +92,7 @@ export default function PricingPage() {
                   key={tier}
                   className={`card-glass p-8 flex flex-col transition-all duration-300 ${
                     tier === 'pro'
-                      ? 'ring-2 ring-accent-500 scale-105 shadow-glow-purple'
+                      ? 'ring-2 ring-accent-500 scale-105 shadow-glow-green'
                       : 'hover:shadow-glow'
                   }`}
                 >

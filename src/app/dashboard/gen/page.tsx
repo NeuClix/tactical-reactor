@@ -75,10 +75,10 @@ export default function GenHubPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Gen Hub
+        <h1 className="text-3xl font-bold tracking-tight">
+          <span className="gradient-text-tech">Gen Hub</span>
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-dark-300">
           Generate content using AI powered by Anthropic Claude
         </p>
       </div>

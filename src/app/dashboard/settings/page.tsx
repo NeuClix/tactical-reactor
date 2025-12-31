@@ -148,10 +148,10 @@ export default function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Account Settings
+        <h1 className="text-3xl font-bold tracking-tight">
+          <span className="gradient-text-tech">Account Settings</span>
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-dark-300">
           Manage your profile, subscription, and preferences
         </p>
       </div>

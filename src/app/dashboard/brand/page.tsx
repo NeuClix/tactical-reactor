@@ -119,10 +119,10 @@ export default function BrandHubPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Brand Hub
+        <h1 className="text-3xl font-bold tracking-tight">
+          <span className="gradient-text-tech">Brand Hub</span>
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-dark-300">
           Customize your brand identity with logos, colors, and fonts
         </p>
       </div>

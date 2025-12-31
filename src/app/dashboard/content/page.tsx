@@ -82,10 +82,10 @@ export default function ContentHubPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Content Hub
+          <h1 className="text-3xl font-bold tracking-tight">
+            <span className="gradient-text-tech">Content Hub</span>
           </h1>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-dark-300">
             Create, edit, and manage your content
           </p>
         </div>

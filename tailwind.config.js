@@ -8,31 +8,31 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Primary tech/AI palette
+        // Primary - Neuclix Yellow (#efc772)
         primary: {
-          50: '#f0f4ff',
-          100: '#e6ecff',
-          200: '#c7d9ff',
-          300: '#a8c7ff',
-          400: '#7fa8ff',
-          500: '#5b87ff',
-          600: '#4a6fff',
-          700: '#3857d9',
-          800: '#2d45ad',
-          900: '#243582',
+          50: '#fef9ec',
+          100: '#fdf3d4',
+          200: '#fbe7a9',
+          300: '#f8da7d',
+          400: '#f4ce52',
+          500: '#efc772', // Brand yellow
+          600: '#d9a848',
+          700: '#b88a3d',
+          800: '#956f33',
+          900: '#755629',
         },
-        // Secondary accent - neon purple
+        // Secondary accent - Neuclix Green (#00ac4e)
         accent: {
-          50: '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#a855f7',
-          600: '#9333ea',
-          700: '#7e22ce',
-          800: '#6b21a8',
-          900: '#581c87',
+          50: '#e6f7ed',
+          100: '#ccefdb',
+          200: '#99dfb7',
+          300: '#66cf93',
+          400: '#33bf6f',
+          500: '#00ac4e', // Brand green
+          600: '#009a46',
+          700: '#00833b',
+          800: '#006c30',
+          900: '#005525',
         },
         // Dark mode base
         dark: {
@@ -44,28 +44,28 @@ module.exports = {
           500: '#6b7280',
           600: '#4b5563',
           700: '#374151',
-          800: '#1f2937',
+          800: '#231f20', // Brand dark grey
           900: '#0f1419',
           950: '#07080e',
         },
-        // Cyberpunk gradient stops
-        cyber: {
-          blue: '#00d9ff',
-          purple: '#d000ff',
-          pink: '#ff006e',
+        // Brand colors for convenience
+        brand: {
+          yellow: '#efc772',
+          green: '#00ac4e',
+          dark: '#231f20',
         },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-tech': 'linear-gradient(135deg, #5b87ff 0%, #a855f7 50%, #ff006e 100%)',
-        'gradient-dark': 'linear-gradient(135deg, #0f1419 0%, #1f2937 100%)',
+        'gradient-tech': 'linear-gradient(135deg, #00ac4e 0%, #66cf93 50%, #efc772 100%)', // Green to Yellow
+        'gradient-dark': 'linear-gradient(135deg, #07080e 0%, #231f20 100%)',
       },
       boxShadow: {
-        glow: '0 0 20px rgba(91, 135, 255, 0.3)',
-        'glow-purple': '0 0 20px rgba(168, 85, 247, 0.3)',
-        'glow-pink': '0 0 20px rgba(255, 0, 110, 0.3)',
-        'tech': '0 0 0 1px rgba(91, 135, 255, 0.2), 0 0 20px rgba(91, 135, 255, 0.1)',
+        glow: '0 0 20px rgba(239, 199, 114, 0.3)', // Yellow glow
+        'glow-green': '0 0 20px rgba(0, 172, 78, 0.3)', // Green glow
+        'glow-yellow': '0 0 20px rgba(239, 199, 114, 0.3)', // Yellow glow
+        'tech': '0 0 0 1px rgba(0, 172, 78, 0.2), 0 0 20px rgba(239, 199, 114, 0.1)', // Green border, yellow glow
       },
     },
   },
