@@ -36,3 +36,6 @@ export const getCurrentUser = async () => {
 
   return user
 }
+// Alias for backward compatibility with site pages
+export const createClient = createServerComponentClient
+
